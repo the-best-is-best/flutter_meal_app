@@ -8,8 +8,7 @@ import '../widgets/meal_item.dart';
 class CategoryMealsScreen extends StatefulWidget {
   static const routeName = "/category_meals";
   final List<Meal> avaliableMeal;
-  final Function saveDeleteId;
-  const CategoryMealsScreen(this.avaliableMeal, this.saveDeleteId);
+  const CategoryMealsScreen(this.avaliableMeal);
   @override
   _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
 }

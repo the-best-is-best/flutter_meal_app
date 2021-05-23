@@ -5,8 +5,11 @@ import '../dummy_data.dart';
 class MealDetailScreen extends StatefulWidget {
   static const routeName = "/meal_detail";
   final Function saveDeleteId;
+  final Function taggleFavorite;
+  final Function isMealFavorite;
 
-  const MealDetailScreen(this.saveDeleteId);
+  const MealDetailScreen(
+      this.saveDeleteId, this.taggleFavorite, this.isMealFavorite);
 
   @override
   _MealDetailScreenState createState() => _MealDetailScreenState();
@@ -78,6 +81,23 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
           selectMeal.title,
           style: Theme.of(context).appBarTheme.textTheme!.headline5,
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              widget.taggleFavorite(mealId);
+              widget.isMealFavorite(mealId)
+                  ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Add To Favorite"),
+                    ))
+                  : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Removed From Favorite"),
+                    ));
+            },
+            icon: Icon(
+              widget.isMealFavorite(mealId) ? Icons.star : Icons.star_border,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -176,6 +196,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
         onPressed: () {
           widget.saveDeleteId(mealId);
           Navigator.of(context).pop(mealId);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Deleted"),
+          ));
         },
         //Test Cart
         // child: Icon(Icons.shopping_bag),

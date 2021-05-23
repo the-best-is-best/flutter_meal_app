@@ -32,6 +32,40 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<Meal> _avaliableMeal = [];
+  List<Meal> _favoriteMeal = [];
+  List<Meal> _filterFavoriteMeal = [];
+
+  void taggleFavorite(int id) {
+    final existingIndex = _favoriteMeal.indexWhere((meal) => meal.id == id);
+    if (existingIndex >= 0) {
+      setState(() {
+        _favoriteMeal.removeAt(existingIndex);
+      });
+    } else {
+      setState(() {
+        _favoriteMeal.add(_avaliableMeal.firstWhere((meal) => meal.id == id));
+      });
+    }
+    filterFavorite();
+  }
+
+  void filterFavorite() {
+    _filterFavoriteMeal = [];
+    if (_favoriteMeal.length != 0) {
+      for (int i = 0; i < _favoriteMeal.length; i++) {
+        for (int x = 0; x < _avaliableMeal.length; x++) {
+          if (_favoriteMeal[i].id == _avaliableMeal[x].id) {
+            _filterFavoriteMeal.add(_favoriteMeal[i]);
+          }
+        }
+      }
+    }
+  }
+
+  bool isMealFavorite(int id) {
+    return _favoriteMeal.any((meal) => meal.id == id);
+  }
+
   @override
   void initState() {
     _setFilters(_filters);
@@ -58,12 +92,16 @@ class _MyAppState extends State<MyApp> {
         return true;
       }).toList();
       deletedItem();
+      filterFavorite();
     });
   }
 
   void deletedItem() {
     for (int i = 0; i < deleteId.length; i++) {
       _avaliableMeal.removeWhere((meal) => meal.id == deleteId[i]);
+      if (_favoriteMeal.length != 0) {
+        _favoriteMeal.removeWhere((meal) => meal.id == deleteId[i]);
+      }
     }
   }
 
@@ -98,10 +136,11 @@ class _MyAppState extends State<MyApp> {
             ),
       ),
       routes: {
-        '/': (context) => TabsScreen(),
+        '/': (context) => TabsScreen(_filterFavoriteMeal),
         CategoryMealsScreen.routeName: (context) =>
-            CategoryMealsScreen(_avaliableMeal, _setDeleteId),
-        MealDetailScreen.routeName: (context) => MealDetailScreen(_setDeleteId),
+            CategoryMealsScreen(_avaliableMeal),
+        MealDetailScreen.routeName: (context) =>
+            MealDetailScreen(_setDeleteId, taggleFavorite, isMealFavorite),
         FiltersScreen.routeName: (context) =>
             FiltersScreen(_filters, _setFilters),
       },

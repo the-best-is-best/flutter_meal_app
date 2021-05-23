@@ -52,6 +52,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 'vegetarian': _vegetarian,
               };
               widget.saveFilters(selectedFulters);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("Saved"),
+              ));
             },
             icon: Icon(Icons.save),
           ),
